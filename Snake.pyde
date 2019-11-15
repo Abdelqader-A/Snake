@@ -5,8 +5,7 @@ class Game:
     def __init__(self, h, w):
         self.h = h
         self.w = w
-        self.snake = Snake(300,300,15)
-        #FIX IT (MAKE PIXELS GLOBAL)
+        self.snake = Element(300,300,15)
         
     def show(self):
         stroke(205,205,205)
@@ -22,41 +21,38 @@ class Element:
         self.r = r
         self.ym = 0
         self. xm = 0
+        self.key_dict = {LEFT: False, RIGHT: False, UP: False, DOWN: False}
+        
+    def move(self):
+            if self.key_dict[DOWN] == True:
+                self.ym = -self.r*2
+                
+            elif self.key_dict[UP] == True:
+                self.ym = self.r*2
+                
+            elif self.key_dict[RIGHT] == True:
+                self.xm = self.r*2
+    
+            elif self.key_dict[LEFT] == True:
+                self.xm = -self.r*2
 
     def show(self):
         circle(self.x, self.y, self.r*2)
+        self.update()
         
+    def update(self):
+        self.move()
+        self.x += self.xm
+        self.y += self.ym
+
         
 class Snake(Element):
     def __init__(self, x, y, r):
         Element.__init__(self,x, y, r)
-        self.key_dict = {LEFT: False, RIGHT: False, UP: False, DOWN: False}
-        
-        def move(self):
-            if self.key_dict == DOWN:
-                self.ym = -5
-                
-            elif self.key_dict == UP:
-                self.ym = 5
-                
-            elif self.key_dict == RIGHT:
-                self.xm = 5
     
-            elif self.key_dict == LEFT:
-                self.xm = -5
-                
-            else:
-                self.xm = -5
-                
-                
-            self.x += self.xm
-            self.y += self.ym
-            
-        def show(self):
-            self.move()
-            
-                
-
+    # def show(self):
+    #     circle(self.x, self.y, self.r*2)
+    #     self.move()
 
 play = Game(600,600)
 
@@ -93,6 +89,7 @@ def setup():
     
     
 def draw():
-    background(205,205,205)
-    play.show()
+    if frameCount % 5 == 0:
+        background(205,205,205)
+        play.show()
     
