@@ -5,13 +5,20 @@ class Game:
     def __init__(self, h, w):
         self.h = h
         self.w = w
-        self.snake = Element(self.h/2,self.w/2,15)
+        self.snake = Snake(self.h/2,self.w/2,15)
         
     def show(self):
         stroke(205,205,205)
         fill(205,205,205)
-        fill(140,208,125)
-        self.snake.show()
+        
+        if self.snake.alive == True:
+            fill(140,208,125)
+            self.snake.show()
+            
+        elif self.snake.alive == False:
+            fill(0)
+            textSize(16)
+            text("Game Over!", self.h/2, self.w/2)
         
 class Element:
     def __init__(self, x, y, r):
@@ -20,9 +27,18 @@ class Element:
         self.r = r
         self.ym = 0
         self. xm = 0
-        self.key_dict = {LEFT: False, RIGHT: False, UP: False, DOWN: False}
+
+    def show(self):
+        circle(self.x+self.r, self.y+self.r, self.r*2)
+    
         
-    def move(self):
+class Snake(Element):
+    def __init__(self, x, y, r):
+        Element.__init__(self,x, y, r)
+        self.alive = True
+        self.key_dict = {LEFT: False, RIGHT: False, UP: False, DOWN: False}
+            
+    def update(self):
             if self.key_dict[DOWN] == True:
                 self.ym = self.r
                 self.y += self.ym + self.r
@@ -38,24 +54,13 @@ class Element:
             elif self.key_dict[LEFT] == True:
                 self.xm = -self.r
                 self.x += self.xm - self.r
- 
-
+                
     def show(self):
-        circle(self.x+self.r, self.y+self.r, self.r*2)
-        self.update()
-        
-    def update(self):
-        self.move()
-
+            Element.show(self)
+            self.update()
+            
 
         
-class Snake(Element):
-    def __init__(self, x, y, r):
-        Element.__init__(self,x, y, r)
-    
-    # def show(self):
-    #     circle(self.x, self.y, self.r*2)
-    #     self.move()
 
 play = Game(600,600)
 
