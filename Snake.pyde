@@ -18,7 +18,11 @@ class Game:
         elif self.snake.alive == False:
             fill(0)
             textSize(16)
-            text("Game Over!", self.h/2, self.w/2)
+            textAlign(CENTER, CENTER)
+            text("Game Over!",self.h/2,self.w/2)
+            textSize(14)
+            textAlign(CENTER,TOP)
+            text("Press Any Key to Play Again :)", self.h/2, self.w/2+15)
         
 class Element:
     def __init__(self, x, y, r):
@@ -38,7 +42,7 @@ class Snake(Element):
         self.alive = True
         self.key_dict = {LEFT: False, RIGHT: False, UP: False, DOWN: False}
             
-    def update(self):
+    def move(self):
             if self.key_dict[DOWN] == True:
                 self.ym = self.r
                 self.y += self.ym + self.r
@@ -54,6 +58,14 @@ class Snake(Element):
             elif self.key_dict[LEFT] == True:
                 self.xm = -self.r
                 self.x += self.xm - self.r
+                
+    def update(self):
+        self.move()
+        if self.y + self.r > play.h or self.y - self.r < 0 or self.x + self.r > play.w or self.x - self.r < 0:
+            self.alive = False
+            
+                
+                
                 
     def show(self):
             Element.show(self)
