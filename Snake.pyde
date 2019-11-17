@@ -23,7 +23,10 @@ class Game:
             textSize(14)
             textAlign(CENTER,TOP)
             text("Press Any Key to Play Again :)", self.h/2, self.w/2+15)
-        
+            
+            # if keyPressed == True:
+
+
 class Element:
     def __init__(self, x, y, r):
         self.x = x
@@ -45,7 +48,7 @@ class Snake(Element):
     def __init__(self, x, y, r, img, img_w, img_h, img2):
         Element.__init__(self,x, y, r)
         self.alive = True
-        self.key_dict = {LEFT: False, RIGHT: False, UP: False, DOWN: False}
+        self.key_dict = {LEFT: False, RIGHT: True, UP: False, DOWN: False}
         self.img_w = img_w
         self.img_h = img_h
         self.img = loadImage(path + "/images/" + img)
@@ -110,45 +113,48 @@ class Snake(Element):
 
 
 
-
-
-
-
-
-
-
-
-
 play = Game(600,600)
 
 def keyPressed():
     if keyCode == LEFT:
-        play.snake.key_dict[LEFT] = True
-        play.snake.key_dict[RIGHT] = False
-        play.snake.key_dict[UP] = False
-        play.snake.key_dict[DOWN] = False
-        play.snake.snake_dir = LEFT
+        if play.snake.key_dict[RIGHT] == True:
+            pass
+            
+        else:
+            play.snake.key_dict[LEFT] = True
+            play.snake.key_dict[UP] = False
+            play.snake.key_dict[DOWN] = False
+            play.snake.snake_dir = LEFT
         
     elif keyCode == RIGHT:
-        play.snake.key_dict[RIGHT] = True
-        play.snake.key_dict[LEFT] = False
-        play.snake.key_dict[UP] = False
-        play.snake.key_dict[DOWN] = False
-        play.snake.snake_dir = RIGHT
+        if play.snake.key_dict[LEFT] == True:
+            pass
+            
+        else:
+            play.snake.key_dict[RIGHT] = True
+            play.snake.key_dict[UP] = False
+            play.snake.key_dict[DOWN] = False
+            play.snake.snake_dir = RIGHT
         
     elif keyCode == UP:
-        play.snake.key_dict[UP] = True
-        play.snake.key_dict[DOWN] = False
-        play.snake.key_dict[LEFT] = False
-        play.snake.key_dict[RIGHT] = False
-        play.snake.snake_dir = UP
+        if play.snake.key_dict[DOWN] == True:
+            pass
+        
+        else:
+            play.snake.key_dict[UP] = True
+            play.snake.key_dict[LEFT] = False
+            play.snake.key_dict[RIGHT] = False
+            play.snake.snake_dir = UP
 
     elif keyCode == DOWN:
-        play.snake.key_dict[DOWN] = True
-        play.snake.key_dict[UP] = False
-        play.snake.key_dict[LEFT] = False
-        play.snake.key_dict[RIGHT] = False
-        play.snake.snake_dir = DOWN
+        if play.snake.key_dict[UP] == True:
+            pass
+            
+        else:
+            play.snake.key_dict[DOWN] = True
+            play.snake.key_dict[LEFT] = False
+            play.snake.key_dict[RIGHT] = False
+            play.snake.snake_dir = DOWN
         
         
 def setup():
