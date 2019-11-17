@@ -3,17 +3,26 @@ path = os.getcwd()
 
 ROWS = 20
 COLS = 20
+SQR = 30 #Dimention of a 1x1 grid (pixels)
+WIDTH = ROWS*SQR
+HEIGHT = COLS*SQR
 
 class Game:
     def __init__(self, h, w):
         self.h = h
         self.w = w
         self.snake = Snake()
-        # self.fruit = Food()
+        self.fruit = Food()
         
     def show(self):
+        Score = int(len(Snake().tail) - 4)
+        fill(0)
+        textSize(14)
+        textAlign(RIGHT, BOTTOM)
+        text("Score: "+str(Score), self.w-SQR,SQR)
         if self.snake.alive == True:
             self.snake.show()
+            self.fruit.show()
             
         elif self.snake.alive == False:
             fill(0)
@@ -24,7 +33,7 @@ class Game:
             textAlign(CENTER,TOP)
             text("Click to Restart!", self.h/2, self.w/2+15)
             
-
+        
 class Element:
     def __init__(self, x, y, color):
         self.x = x
@@ -45,18 +54,18 @@ class Element:
         elif self.color == "red":
             fill(173, 48, 32)
             
-        circle(self.x+15, self.y+15, 30)
+        circle(self.x+SQR/2, self.y+SQR/2, SQR)
     
         
 class Snake():
     def __init__(self):
-        self.r = 15
+        self.r = SQR/2
         self.alive = True
         self.key_dict = {LEFT: False, RIGHT: True, UP: False, DOWN: False}
         self.img2 = loadImage(path + "/images/head_up.png" )
         self.img = loadImage(path + "/images/head_left.png")
         self.dir = RIGHT
-        self.tail = [Element(300, 300, "green"), Element(270, 300, "green"), Element(240, 300, "green"), Element(210, 300, "green")]
+        self.tail = [Element(WIDTH/2, HEIGHT/2, "green"), Element(WIDTH/2 - SQR, WIDTH/2, "green"), Element(WIDTH/2 - 2*SQR, WIDTH/2, "green"), Element(WIDTH/2 - 3*SQR, WIDTH/2, "green")]
 
     def move(self):
             if self.key_dict[DOWN] == True:
@@ -91,45 +100,42 @@ class Snake():
         if (self.tail[0].y) >= play.h or (self.tail[0].y) < 0 or (self.tail[0].x) >= play.w or (self.tail[0].x) < 0:
             self.alive = False
             
-        
-            
     def head(self):
         if self.dir == LEFT:
-            image(self.img, self.tail[0].x, self.tail[0].y, 30, 30)
+            image(self.img, self.tail[0].x, self.tail[0].y, SQR, SQR)
            
         elif self.dir == RIGHT:
-            image(self.img, self.tail[0].x, self.tail[0].y, 30, 30, 30, 30, 0, 0)
+            image(self.img, self.tail[0].x, self.tail[0].y, SQR, SQR, SQR, SQR, 0, 0)
              
         elif self.dir == UP:
-            image(self.img2, self.tail[0].x, self.tail[0].y, 30, 30)
+            image(self.img2, self.tail[0].x, self.tail[0].y, SQR, SQR)
 
         elif self.dir == DOWN:
-            image(self.img2, self.tail[0].x, self.tail[0].y, 30, 30, 30, 30, 0, 0)
-            
-            
-    # def tail(self):
-        
-    
+            image(self.img2, self.tail[0].x, self.tail[0].y, SQR, SQR, SQR, SQR, 0, 0)
                 
     def show(self):
         for element in self.tail:
             element.show()
         self.head()
         self.update()
-            
-# class Food:
-#     def __init__(self):
-#         self.x = random.randint(0, play.w)
-#         self.y = random.randint(0, play.h)
-#         # self.type = 
+
+
+class Food:
+    def __init__(self):
+        self.x = random.randint(0, ROWS)
+        self.y = random.randint(0, COLS)
+        self.type = random.randint(0,1)
+        if self.type == 1:
+            self.fruit = "banana"
+        elif self.type == 0:
+            self.fruit = "apple"
+        self.img = loadImage(path + "/images/" + self.fruit + ".png")
         
-#     # def show(self):
-        
+    def show(self):
+        image(self.img, self.x*SQR, self.y*SQR, SQR, SQR)
     
 
-
-
-play = Game(600,600)
+play = Game(WIDTH,HEIGHT)
 
 def keyPressed():
     if keyCode == LEFT:
@@ -178,7 +184,7 @@ def setup():
     
 def mouseClicked():
     global play
-    play = Game(600, 600)
+    play = Game(WIDTH, HEIGHT)
     
 def draw():
     if frameCount % 12 == 0:
