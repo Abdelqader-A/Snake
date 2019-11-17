@@ -12,7 +12,7 @@ class Game:
         fill(205,205,205)
         
         if self.snake.alive == True:
-            fill(140,208,125)
+            fill(80,153,32)
             self.snake.show()
             
         elif self.snake.alive == False:
@@ -30,11 +30,15 @@ class Element:
         self.y = y
         self.r = r
         self.ym = 0
-        self. xm = 0
+        self. xm = 15
         self.img_w = img_w
         self.img_h = img_h
         self.img = loadImage(path + "/images/" + img)
         self.dir = RIGHT
+        
+    def update(self):
+        self.x += self.xm
+        self.y += self.ym
 
 
     def show(self):
@@ -52,15 +56,18 @@ class Snake(Element):
             if self.key_dict[DOWN] == True:
                 self.ym = self.r
                 self.y += self.ym + self.r
+                self.dir = DOWN
                 
             elif self.key_dict[UP] == True:
                 self.ym = -self.r
                 self.y += self.ym - self.r
+                self.dir = UP
                 
             elif self.key_dict[RIGHT] == True:
                 self.xm = self.r
                 self.x += self.xm +self.r
                 self.dir = RIGHT
+  
     
             elif self.key_dict[LEFT] == True:
                 self.xm = -self.r
@@ -70,20 +77,27 @@ class Snake(Element):
                 
     def update(self):
         self.move()
+        #Makes sure that the snake doesn't go out of the board
         if (self.y) > play.h or (self.y) < 0 or (self.x) > play.w or (self.x) < 0:
             self.alive = False
             
-        if self.dir == RIGHT:
-            image(self.img, self.x, self.y, self.img_w, self.img_h, self.x + self.img_w, self.y + self.img_h, self.x, self.y)
-        
-        elif self.dir == LEFT:
+    def head(self):
+        if self.dir == LEFT:
             image(self.img, self.x, self.y, self.img_w, self.img_h)
-      
-          
-                
+           
+        elif self.dir == RIGHT:
+            image(self.img, self.x, self.y, self.img_w, self.img_h, self.img_w, 0, 0, self.img_h)
+             
+        elif self.dir == UP:
+            image(self.img, self.x, self.y, self.img_w, self.img_h)
+
+        elif self.dir == DOWN:
+            image(self.img, self.x, self.y, self.img_w, self.img_h)
+            
                 
     def show(self):
             Element.show(self)
+            self.head()
             self.update()
             
 
@@ -95,24 +109,28 @@ def keyPressed():
         play.snake.key_dict[RIGHT] = False
         play.snake.key_dict[UP] = False
         play.snake.key_dict[DOWN] = False
+        play.snake.snake_dir = LEFT
         
     elif keyCode == RIGHT:
         play.snake.key_dict[RIGHT] = True
         play.snake.key_dict[LEFT] = False
         play.snake.key_dict[UP] = False
         play.snake.key_dict[DOWN] = False
+        play.snake.snake_dir = RIGHT
         
     elif keyCode == UP:
         play.snake.key_dict[UP] = True
         play.snake.key_dict[DOWN] = False
         play.snake.key_dict[LEFT] = False
         play.snake.key_dict[RIGHT] = False
+        play.snake.snake_dir = UP
 
     elif keyCode == DOWN:
         play.snake.key_dict[DOWN] = True
         play.snake.key_dict[UP] = False
         play.snake.key_dict[LEFT] = False
         play.snake.key_dict[RIGHT] = False
+        play.snake.snake_dir = DOWN
         
         
 def setup():
