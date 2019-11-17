@@ -7,31 +7,62 @@ SQR = 30 #Dimention of a 1x1 grid (pixels)
 WIDTH = ROWS*SQR
 HEIGHT = COLS*SQR
 
+
 class Game:
     def __init__(self, h, w):
+        self.score = int(len(Snake().tail) - 4)
         self.h = h
         self.w = w
         self.snake = Snake()
-        self.fruit = Food()
+        self.fruit = Food(self.snake)
+        self.pMove = None
+        
+    def collision(self):
+        if self.fruit.x*SQR == self.snake.tail[0].x and self.fruit.y*SQR == self.snake.tail[0].y :
+
+            if self.fruit.type == 1:
+                num = 4
+                self.snake.tail.append(Element(WIDTH/2 - num*SQR, WIDTH/2, "yellow"))
+                self.fruit.generate()
+                num +=1
+                self.score += 1
+
+            else:
+                num = 4
+                self.snake.tail.append(Element(WIDTH/2 - num*SQR, WIDTH/2, "red"))
+                self.fruit.generate()
+                num += 1
+                self.score += 1
         
     def show(self):
-        Score = int(len(Snake().tail) - 4)
+        self.pMove = self.snake.dir
         fill(0)
         textSize(14)
         textAlign(RIGHT, BOTTOM)
-        text("Score: "+str(Score), self.w-SQR,SQR)
+        text("Score: "+str(self.score), self.w-SQR,SQR)
+        # self.snake.eat_self()
         if self.snake.alive == True:
             self.snake.show()
             self.fruit.show()
+            self.collision()
             
         elif self.snake.alive == False:
-            fill(0)
-            textSize(16)
-            textAlign(CENTER, CENTER)
-            text("Game Over!",self.h/2,self.w/2)
-            textSize(14)
-            textAlign(CENTER,TOP)
-            text("Click to Restart!", self.h/2, self.w/2+15)
+            if self.snake.win == False:
+                fill(0)
+                textSize(16)
+                textAlign(CENTER, CENTER)
+                text("Game Over!",self.h/2,self.w/2)
+                textSize(14)
+                textAlign(CENTER,TOP)
+                text("Click to Restart!", self.h/2, self.w/2+15)
+            else:
+                fill(0)
+                textSize(16)
+                textAlign(CENTER, CENTER)
+                text("You Win!",self.h/2,self.w/2)
+                textSize(14)
+                textAlign(CENTER,TOP)
+                text("Click to Restart!", self.h/2, self.w/2+15)
             
         
 class Element:
@@ -61,6 +92,7 @@ class Snake():
     def __init__(self):
         self.r = SQR/2
         self.alive = True
+        self.win = False
         self.key_dict = {LEFT: False, RIGHT: True, UP: False, DOWN: False}
         self.img2 = loadImage(path + "/images/head_up.png" )
         self.img = loadImage(path + "/images/head_left.png")
@@ -93,9 +125,22 @@ class Snake():
                 self.tail[-i].x = self.tail[-i-1].x
                 self.tail[-i].y = self.tail[-i-1].y
                 
+                
+    def eat_self(self):
+        for j in range(2, len(self.tail)):
+            if self.tail[0].x == self.tail[j].x and self.tail[0].y == self.tail[j].y:
+                self.alive = False
+                
                         
     def update(self):
+        self.eat_self()
+        if len(self.tail) == ROWS * COLS:
+            self.alive = False
+            self.win = True
+            return
         self.move()
+
+        
         #Makes sure that the snake doesn't go out of the board
         if (self.tail[0].y) >= play.h or (self.tail[0].y) < 0 or (self.tail[0].x) >= play.w or (self.tail[0].x) < 0:
             self.alive = False
@@ -112,7 +157,8 @@ class Snake():
 
         elif self.dir == DOWN:
             image(self.img2, self.tail[0].x, self.tail[0].y, SQR, SQR, SQR, SQR, 0, 0)
-                
+            
+        
     def show(self):
         for element in self.tail:
             element.show()
@@ -121,15 +167,33 @@ class Snake():
 
 
 class Food:
-    def __init__(self):
-        self.x = random.randint(0, ROWS)
-        self.y = random.randint(0, COLS)
+    def __init__(self, snake):
+        self.x = random.randint(0, ROWS-1)
+        self.y = random.randint(0, COLS-1)
+        self.snake = snake
+        self.generate()
+        
+    def generate(self):
         self.type = random.randint(0,1)
         if self.type == 1:
             self.fruit = "banana"
         elif self.type == 0:
             self.fruit = "apple"
         self.img = loadImage(path + "/images/" + self.fruit + ".png")
+        
+        #To prevent it from spawning on the snake
+        self.x = random.randint(0, ROWS-1)
+        self.y = random.randint(0, COLS-1)
+        isFound = False
+        for i in self.snake.tail:
+            print(i.x)
+            if i.x//SQR == self.x and i.y//SQR == self.y: 
+                isFound = True
+                print('STOP')
+        if isFound:
+            self.generate()
+        
+        
         
     def show(self):
         image(self.img, self.x*SQR, self.y*SQR, SQR, SQR)
@@ -138,9 +202,9 @@ class Food:
 play = Game(WIDTH,HEIGHT)
 
 def keyPressed():
-    if keyCode == LEFT:
+    if keyCode == LEFT and play.pMove != RIGHT:
         if play.snake.key_dict[RIGHT] == True:
-            pass
+            return
             
         else:
             play.snake.key_dict[LEFT] = True
@@ -148,9 +212,9 @@ def keyPressed():
             play.snake.key_dict[DOWN] = False
             play.snake.snake_dir = LEFT
         
-    elif keyCode == RIGHT:
+    elif keyCode == RIGHT and play.pMove != LEFT:
         if play.snake.key_dict[LEFT] == True:
-            pass
+            return
             
         else:
             play.snake.key_dict[RIGHT] = True
@@ -158,9 +222,9 @@ def keyPressed():
             play.snake.key_dict[DOWN] = False
             play.snake.snake_dir = RIGHT
         
-    elif keyCode == UP:
+    elif keyCode == UP and play.pMove != DOWN:
         if play.snake.key_dict[DOWN] == True:
-            pass
+            return
         
         else:
             play.snake.key_dict[UP] = True
@@ -168,9 +232,9 @@ def keyPressed():
             play.snake.key_dict[RIGHT] = False
             play.snake.snake_dir = UP
 
-    elif keyCode == DOWN:
+    elif keyCode == DOWN and play.pMove != UP:
         if play.snake.key_dict[UP] == True:
-            pass
+            return
             
         else:
             play.snake.key_dict[DOWN] = True
