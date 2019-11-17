@@ -5,7 +5,7 @@ class Game:
     def __init__(self, h, w):
         self.h = h
         self.w = w
-        self.snake = Snake(self.h/2, self.w/2, 15, "head_left.png", 30, 30)
+        self.snake = Snake(self.h/2, self.w/2, 15, "head_left.png", 30, 30, "head_up.png")
         
     def show(self):
         stroke(205,205,205)
@@ -25,16 +25,12 @@ class Game:
             text("Press Any Key to Play Again :)", self.h/2, self.w/2+15)
         
 class Element:
-    def __init__(self, x, y, r, img, img_w, img_h):
+    def __init__(self, x, y, r):
         self.x = x
         self.y = y
         self.r = r
         self.ym = 0
-        self. xm = 15
-        self.img_w = img_w
-        self.img_h = img_h
-        self.img = loadImage(path + "/images/" + img)
-        self.dir = RIGHT
+        self. xm = 0
         
     def update(self):
         self.x += self.xm
@@ -46,12 +42,17 @@ class Element:
     
         
 class Snake(Element):
-    def __init__(self, x, y, r, img, img_w, img_h):
-        Element.__init__(self,x, y, r, img, img_w, img_h)
+    def __init__(self, x, y, r, img, img_w, img_h, img2):
+        Element.__init__(self,x, y, r)
         self.alive = True
         self.key_dict = {LEFT: False, RIGHT: False, UP: False, DOWN: False}
+        self.img_w = img_w
+        self.img_h = img_h
+        self.img = loadImage(path + "/images/" + img)
+        self.img2 = loadImage(path + "/images/" + img2)
+        self.dir = RIGHT
+        self.tail = []
 
-            
     def move(self):
             if self.key_dict[DOWN] == True:
                 self.ym = self.r
@@ -89,17 +90,34 @@ class Snake(Element):
             image(self.img, self.x, self.y, self.img_w, self.img_h, self.img_w, 0, 0, self.img_h)
              
         elif self.dir == UP:
-            image(self.img, self.x, self.y, self.img_w, self.img_h)
+            image(self.img2, self.x, self.y, self.img_w, self.img_h)
 
         elif self.dir == DOWN:
-            image(self.img, self.x, self.y, self.img_w, self.img_h)
+            image(self.img2, self.x, self.y, self.img_w, self.img_h, self.img_w, self.img_h, 0, 0)
             
+            
+    # def tail(self):
+        
+    
                 
     def show(self):
             Element.show(self)
             self.head()
             self.update()
             
+# class Food:
+#     def __init__(self, x, y, img, img_w, img_h
+
+
+
+
+
+
+
+
+
+
+
 
 play = Game(600,600)
 
